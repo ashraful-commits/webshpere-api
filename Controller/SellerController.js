@@ -29,14 +29,19 @@ CREATE SELLER
  const createSeller =expressAsyncHandler(async(req,res)=>{
 try {
     const {name,email,password,pricing,client,salesPerson,employment,totalWithdrawn,emailSignature,website,projects} = req.body
+    const isEmailExist = await Seller.findOne({email})
+    if(isEmailExist){
+      return res.status(404).json({message:"Email already exist"})
+    }else{
     const sellerAvatar = await cloudUploads(req.file.path)
     const seller = await Seller.create({name,email,password:await makeHash(password),pricing,client:client?client:[],salesPerson:salesPerson?salesPerson:[],employment,totalWithdrawn,emailSignature,website,projects:projects?projects:[] , avatar:sellerAvatar?sellerAvatar:null})
     if(!seller){
-        return res.status(400).json({message:"Seller not create"})
+        return res.status(404).json({message:"Seller not create"})
     }else{
-        return res.status(200).json({seller,message:"Seller created"})
+        return res.status(200).json({seller:seller,message:"Seller created"})
 
     }
+  }
 } catch (error) {
     console.log(error.message)
 }

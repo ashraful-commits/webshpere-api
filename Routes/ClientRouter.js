@@ -1,7 +1,8 @@
 
 const  express  = require( 'express');
-const { createClient, getAllClient }  = require(  '../Controller/ClientController.js');
-const { clientAvatar } =require ('./../Middleware/Multer.js');
+const {  getAllClient, createClient }  = require(  '../Controller/ClientController.js');
+const { clientAvatar, projectFiles } = require('../Middleware/Multer.js');
+
 
 const clientRouter = express.Router()
 

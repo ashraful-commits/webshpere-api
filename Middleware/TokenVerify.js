@@ -18,7 +18,11 @@ const accessToken = req.cookies.accessToken
       process.env.JWT_SECRECT,
       expressAsyncHandler(async (err, decode) => {
         if(err) res.status(404).json({ message: "Not user" });
-        const me = await Seller.findOne({ email: decode?.email });
+        const me = await Seller.findOne({ email: decode?.email }).populate({path:"client",
+        model:"Client",populate:{
+          path:"projects",
+          model:"Project"
+        }});
         req.me = me;
         next();
       })

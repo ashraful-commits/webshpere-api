@@ -23,6 +23,9 @@ const clientSchema =mongoose.Schema({
     clientAvatar: {
         type:String
     },
+    projectSource: {
+        type:String
+    },
     projects:{
     type:[mongoose.Schema.Types.ObjectId],
     default:[],

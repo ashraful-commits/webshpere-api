@@ -15,7 +15,7 @@ const Storages = multer.diskStorage({
   }).single("sellerAvatar")
    const projectFiles = multer({
     storage:Storages
-  }).array("projectFile",5)
+  }).array("projectFile",20)
 
   module.exports ={
     clientAvatar,sellerAvatar,projectFiles

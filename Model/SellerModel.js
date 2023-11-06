@@ -44,7 +44,6 @@ default:"user"
  },
  projects:{
     type:[mongoose.Schema.Types.ObjectId],
-
     default:[],
     ref:"Project"
 

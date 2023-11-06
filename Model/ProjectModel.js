@@ -5,13 +5,15 @@ projectName: {
     type:String
 },
 client:{
-type:[mongoose.Schema.Types.ObjectId]
+type:[mongoose.Schema.Types.ObjectId],
+ref:"Client",
+default:[]
 },
 projectType: {
     type:String
 },
 budget: {
-    type:Number
+    type:String
 },
 amount: {
     type:Number
@@ -42,18 +44,25 @@ invoices:{
     type:Array
 },
 comments:{
-    type:[mongoose.Schema.Types.ObjectId]
+    type:[mongoose.Schema.Types.ObjectId],
+    default:[]
 },
 team:{
     type:[mongoose.Schema.Types.ObjectId]
+    ,
+    default:[]
 },
 feedBack:{
-    type:[mongoose.Schema.Types.ObjectId]
+    type:[mongoose.Schema.Types.ObjectId],
+    default:[]
 },
 commissionRate:{
     type:Number
 }, 
 projectStatus:{
+    type:String
+},
+projectSource:{
     type:String
 },
 status:{
@@ -62,5 +71,5 @@ status:{
 }
 },{timestamp:true})
 
-const Project = mongoose.model("project",projectSchema)
-module.exports=Project
+const Project = mongoose.model("Project",projectSchema)
+module.exports={Project}

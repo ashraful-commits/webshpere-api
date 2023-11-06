@@ -9,7 +9,8 @@ GET ALL PROJECTS
 const expressAsyncHandler = require("express-async-handler")
 
 const { cloudUploads } = require("../Utils/Cloudinary")
-const Project = require("../Model/ProjectModel")
+const { Project } = require("../Model/ProjectModel")
+
 
  const getAllProjects =expressAsyncHandler(async(req,res)=>{
     try {
