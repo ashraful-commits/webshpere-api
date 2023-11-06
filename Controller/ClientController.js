@@ -11,19 +11,28 @@ const { Seller } = require("../Model/SellerModel")
 const { cloudUploads } = require("../Utils/Cloudinary")
 const { Project } = require("../Model/ProjectModel")
 
- const getAllClient =expressAsyncHandler(async(req,res)=>{
-    try {
-      const {id} = req.params
-        const client = await Client.find({sellerId:id})
-        if(client.length<=0){
-           return res.status(400).json({message:"No client"})
-        }else{
-           return res.status(200).json({client:client,message:"All Client"}) 
-        }
-    } catch (error) {
-        console.log(error.message)
+const getAllClient = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) ||7; 
+
+    const skip = (page - 1) * limit;
+
+    const client = await Client.find({ sellerId: id })
+      .limit(limit)
+      .skip(skip);
+
+    if (client.length <= 0) {
+      return res.status(400).json({ message: "No client" });
+    } else {
+      return res.status(200).json({ client: client, message: "" });
     }
-})
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
  const deleteClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
@@ -41,7 +50,8 @@ const { Project } = require("../Model/ProjectModel")
   try {
     const {id} = req.params
     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate } = req.body;
-
+console.log(req.body)
+console.log(id)
       const projectFiles = []
 
       if (req.files && Array.isArray(req.files['projectFile'])) {
