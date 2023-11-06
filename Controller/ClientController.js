@@ -13,7 +13,8 @@ const { Project } = require("../Model/ProjectModel")
 
  const getAllClient =expressAsyncHandler(async(req,res)=>{
     try {
-        const client = await Client.find()
+      const {id} = req.params
+        const client = await Client.find({sellerId:id})
         if(client.length<=0){
            return res.status(400).json({message:"No client"})
         }else{
@@ -23,13 +24,85 @@ const { Project } = require("../Model/ProjectModel")
         console.log(error.message)
     }
 })
+ const deleteClient =expressAsyncHandler(async(req,res)=>{
+    try {
+      const {id} = req.params
+        const client = await Client.findByIdAndDelete(id)
+        if(!client){
+           return res.status(400).json({message:"Not client deleted"})
+        }else{
+           return res.status(200).json({client:client,message:"client deleted"}) 
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+})
+ const updateClient =expressAsyncHandler(async(req,res)=>{
+  try {
+    const {id} = req.params
+    const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate } = req.body;
+
+      const projectFiles = []
+
+      if (req.files && Array.isArray(req.files['projectFile'])) {
+        for (let i = 0; i < req.files['projectFile'].length; i++) {
+          const fileUrl = await cloudUploads(req.files['projectFile'][i].path);
+          projectFiles.push(fileUrl);
+        }
+      }
+      let avatar;
+
+      if (req.files && Array.isArray(req.files['clientAvatar']) && req.files['clientAvatar'][0]) {
+        avatar = await cloudUploads(req.files['clientAvatar'][0].path);
+      }
+
+   const updatedData = await Client.findByIdAndUpdate(id,{
+    clientName,
+         clientEmail,
+         clientPhone,
+         country,
+         state,   
+         clientAddress,
+         clientAvatar: avatar&&avatar,
+         companyName,
+         projectName,
+         client,
+         projectType,
+         budget,
+         amount,
+         projectDesc,
+         timeFrame,
+         projectFile: projectFiles&&projectFiles,
+         date,
+         paymentReceived,
+         label,
+         projectSource,
+         invoices,
+         comments,
+         team,
+         feedBack,
+         commissionRate,
+         projectStatus:"pending",
+         sellerId
+   },{new:true})
+
+   if(!updatedData){
+    return res.status(404).json({ client: updatedData, message: "Not Updated!" });
+   }else{
+    return res.status(200).json({ client: updatedData, message: "Client Updated!" });
+   } 
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+})
 /***
 POST
 CREATE CLIENT
 */
 const createClient = expressAsyncHandler(async (req, res) => {
    try {
-     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, status, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate, projectStatus } = req.body;
+     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName,projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate,  } = req.body;
      let projectFiles =[]
         if(req.files['projectFile']){
          if(req.files['projectFile']){
@@ -39,39 +112,11 @@ const createClient = expressAsyncHandler(async (req, res) => {
            }
          }
         }
-     const project = await Project.create({
-       projectName,
-       client,
-       projectType,
-       budget,
-       amount,
-       projectDesc,
-       timeFrame,
-       projectFile: projectFiles? projectFiles : null,
-       date,
-       paymentReceived,
-       label,
-       projectSource,
-       invoices,
-       comments,
-       team,
-       feedBack,
-       commissionRate,
-       projectStatus:"pending"
-     });
-
-     if (!project) {
-       return res.status(400).json({ message: "No project created" });
-     } else {
-       // Prepare projects array for the Client
-       const projectsArray = project ? [project._id] : [];
- 
-       // Logic for avatar assignment
-       let avatar;
-       if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
-        avatar = await cloudUploads(req.files['clientAvatar'][0].path);
-      }
-    
+        let avatar;
+        if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
+         avatar = await cloudUploads(req.files['clientAvatar'][0].path);
+       }
+     
        const clientData = await Client.create({
          clientName,
          clientEmail,
@@ -80,20 +125,34 @@ const createClient = expressAsyncHandler(async (req, res) => {
          state,   
          clientAddress,
          clientAvatar: avatar ? avatar : null,
-         projects: projectsArray,
-         status,
-         companyName
+         companyName,
+         projectName,
+         projectType,
+         budget,
+         amount,
+         projectDesc,
+         timeFrame,
+         projectFile: projectFiles? projectFiles : null,
+         date,
+         paymentReceived,
+         label,
+         projectSource,
+         invoices,
+         comments,
+         team,
+         feedBack,
+         commissionRate,
+         projectStatus:"pending",
+         sellerId
        });
  
        if (!clientData) {
          return res.status(400).json({ message: "No client created" });
        } else {
-         // Update the associations in Project and Seller models
-         await Project.findByIdAndUpdate(project._id, { $push: { client: clientData._id } });
-         await Seller.findByIdAndUpdate(sellerId, { $push: { client: clientData._id } });
+
          return res.status(200).json({ client: clientData, message: "Client created" });
        }
-     }
+     
    } catch (error) {
      console.log(error.message);
      return res.status(500).json({ message: "Internal Server Error" });
@@ -102,5 +161,5 @@ const createClient = expressAsyncHandler(async (req, res) => {
  
 
 module.exports ={
-    getAllClient,createClient
+    getAllClient,createClient,deleteClient,updateClient
 }

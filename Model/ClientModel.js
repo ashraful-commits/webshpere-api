@@ -26,10 +26,71 @@ const clientSchema =mongoose.Schema({
     projectSource: {
         type:String
     },
-    projects:{
-    type:[mongoose.Schema.Types.ObjectId],
-    default:[],
-    ref:"Project"
+    sellerId:{
+        type:mongoose.Schema.Types.ObjectId
+    },
+    companyName:{
+        type:String
+    },
+    projectName: {
+        type:String
+    },
+   
+    projectType: {
+        type:String
+    },
+    budget: {
+        type:String
+    },
+    amount: {
+        type:Number
+    },
+    projectDesc: {
+        type:String
+    },
+    timeFrame: {
+        type:String
+    },
+    
+    projectFile: {
+        type:Array
+    },
+    date: {
+        type:String
+    },
+    document: {
+        type:Array
+    },
+    paymentReceived:{
+        type:Number
+    },
+    label:{
+    type:Array
+    },
+    invoices:{
+        type:Array
+    },
+    comments:{
+        type:[mongoose.Schema.Types.ObjectId],
+        default:[]
+    },
+    team:{
+        type:[mongoose.Schema.Types.ObjectId]
+        ,
+        default:[]
+    },
+    feedBack:{
+        type:[mongoose.Schema.Types.ObjectId],
+        default:[]
+    },
+    commissionRate:{
+        type:Number
+    }, 
+    projectStatus:{
+        type:String
+    },
+    projectSource:{
+        type:String
     },
     status:{
         type:Boolean,
@@ -39,9 +100,6 @@ const clientSchema =mongoose.Schema({
         type:Boolean,
         default:false
     },
-    companyName:{
-        type:String
-    }
 },{timestamp:true})
 
 const Client = mongoose.model("Client",clientSchema)
