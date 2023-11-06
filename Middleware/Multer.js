@@ -16,7 +16,13 @@ const Storages = multer.diskStorage({
    const projectFiles = multer({
     storage:Storages
   }).array("projectFile",20)
+   const multipleFields = multer({
+    storage:Storages
+  }).fields([
+    {name:"projectFile",maxCount:10},
+    {name:"clientAvatar"},
+  ])
 
   module.exports ={
-    clientAvatar,sellerAvatar,projectFiles
+    clientAvatar,sellerAvatar,projectFiles,multipleFields
   }

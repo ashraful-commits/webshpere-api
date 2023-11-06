@@ -30,18 +30,15 @@ CREATE CLIENT
 const createClient = expressAsyncHandler(async (req, res) => {
    try {
      const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, status, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate, projectStatus } = req.body;
- 
-
      let projectFiles =[]
-        if(req.files){
-         if(req.files){
-           for(let i =0; i<req.files.length; i++){
-             const fileUrl = await cloudUploads(req.files[i].path)
+        if(req.files['projectFile']){
+         if(req.files['projectFile']){
+           for(let i =0; i<req.files['projectFile'].length; i++){
+             const fileUrl = await cloudUploads(req.files['projectFile'][i].path)
              projectFiles.push(fileUrl)
            }
          }
         }
-    
      const project = await Project.create({
        projectName,
        client,
@@ -71,10 +68,10 @@ const createClient = expressAsyncHandler(async (req, res) => {
  
        // Logic for avatar assignment
        let avatar;
-       if(req.file){
-          avatar = await cloudUploads(req.file.path)
-     }
-       // Create the Client
+       if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
+        avatar = await cloudUploads(req.files['clientAvatar'][0].path);
+      }
+    
        const clientData = await Client.create({
          clientName,
          clientEmail,
@@ -94,7 +91,6 @@ const createClient = expressAsyncHandler(async (req, res) => {
          // Update the associations in Project and Seller models
          await Project.findByIdAndUpdate(project._id, { $push: { client: clientData._id } });
          await Seller.findByIdAndUpdate(sellerId, { $push: { client: clientData._id } });
- 
          return res.status(200).json({ client: clientData, message: "Client created" });
        }
      }
