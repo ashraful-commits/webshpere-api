@@ -168,8 +168,29 @@ const createClient = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+/***
+POST
+CREATE CLIENT
+*/
+const PermissionUpdated = expressAsyncHandler(async (req, res) => {
+   try {
+     const {id} = req.params
+     const {status} = req.body
+ const permission =await Client.findByIdAndUpdate(id,{status},{new:true})
+       if (!permission) {
+         return res.status(400).json({ message: "No client created" });
+       } else {
+
+         return res.status(200).json({ client: permission, message: "Client created" });
+       }
+     
+   } catch (error) {
+     console.log(error.message);
+     return res.status(500).json({ message: "Internal Server Error" });
+   }
+ });
  
 
 module.exports ={
-    getAllClient,createClient,deleteClient,updateClient
+    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated
 }
