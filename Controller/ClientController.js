@@ -178,10 +178,28 @@ const PermissionUpdated = expressAsyncHandler(async (req, res) => {
      const {status} = req.body
  const permission =await Client.findByIdAndUpdate(id,{status},{new:true})
        if (!permission) {
-         return res.status(400).json({ message: "No client created" });
+         return res.status(400).json({ message: "Permission not updated!" });
        } else {
 
-         return res.status(200).json({ client: permission, message: "Client created" });
+         return res.status(200).json({ client: permission, message: "permission updated" });
+       }
+     
+   } catch (error) {
+     console.log(error.message);
+     return res.status(500).json({ message: "Internal Server Error" });
+   }
+ });
+const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
+   try {
+     const {id} = req.params
+     const {projectStatus} = req.body
+
+ const projectStatusData =await Client.findByIdAndUpdate(id,{projectStatus},{new:true})
+       if (!projectStatusData) {
+         return res.status(400).json({ message: "Project status not updated" });
+       } else {
+
+         return res.status(200).json({ client: projectStatusData, message: "Project status updated" });
        }
      
    } catch (error) {
@@ -192,5 +210,5 @@ const PermissionUpdated = expressAsyncHandler(async (req, res) => {
  
 
 module.exports ={
-    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated
+    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate
 }
