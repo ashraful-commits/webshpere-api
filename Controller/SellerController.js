@@ -61,7 +61,7 @@ try {
         if(!compare){
             return res.status(400).json({message:"Password not Match !"})
         }else{
-            const Token = makeToken(
+            const Token =await makeToken(
                 {
                   email: IsExistSeller.email,
                   password: IsExistSeller.password,
@@ -69,7 +69,7 @@ try {
                 process.env.JWT_SECRECT,
                 "7d"
               );
-            const RefToken = makeToken(
+            const RefToken =await makeToken(
                 {
                   email: IsExistSeller.email,
                   password: IsExistSeller.password,
@@ -107,7 +107,7 @@ LOGIN SELLER
     if(!req.me){
      return res.status(400).json({message:"Login please !"})
     }else{
-    return res.status(200).json({seller:req.me,message:"Login successful !"})
+    return res.status(200).json({seller:req.me,message:""})
     }
   } catch (error) {
     console.log(error)
