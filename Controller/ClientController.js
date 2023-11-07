@@ -63,8 +63,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
   try {
     const {id} = req.params
     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate } = req.body;
-console.log(req.body)
-console.log(id)
+
       const projectFiles = []
 
       if (req.files && Array.isArray(req.files['projectFile'])) {
