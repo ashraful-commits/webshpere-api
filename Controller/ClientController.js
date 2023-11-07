@@ -46,6 +46,19 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
         console.log(error.message)
     }
 })
+ const getSingleClient =expressAsyncHandler(async(req,res)=>{
+    try {
+      const {id} = req.params
+        const client = await Client.findById(id).populate({path:"sellerId",model:Seller})
+        if(!client){
+           return res.status(400).json({message:"Not client"})
+        }else{
+           return res.status(200).json({client:client,message:" "}) 
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+})
  const updateClient =expressAsyncHandler(async(req,res)=>{
   try {
     const {id} = req.params
@@ -210,5 +223,5 @@ const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
  
 
 module.exports ={
-    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate
+    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate,getSingleClient
 }

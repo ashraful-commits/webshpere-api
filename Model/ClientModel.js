@@ -27,7 +27,9 @@ const clientSchema =mongoose.Schema({
         type:String
     },
     sellerId:{
-        type:mongoose.Schema.Types.ObjectId
+        type:mongoose.Schema.Types.ObjectId,
+        default:null,
+        ref:"Seller"
     },
     companyName:{
         type:String
