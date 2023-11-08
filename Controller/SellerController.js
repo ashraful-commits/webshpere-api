@@ -10,12 +10,57 @@ GET SELLER
 */
  const getAllSeller =expressAsyncHandler(async(req,res)=>{
 try {
-    
-    const seller = await Seller.find()
+
+  const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) ||7; 
+  const role = req.query.role === "admin" ? false : true;
+  const skip = (page - 1) * limit;
+    const seller = await Seller.find({status:role})
+    .limit(limit)
+    .skip(skip);
+
     if(seller.length<=0){
-        return res.status(400).json({message:"No Seller"})
+        return res.status(400).json({message:""})
     }else{
-        return res.status(200).json({seller,message:"All Seller"})
+        return res.status(200).json({seller,message:""})
+
+    }
+} catch (error) {
+    console.log(error.message)
+}
+})
+/***
+GET
+GET SINGLE SELLER
+*/
+ const getSingleSeller =expressAsyncHandler(async(req,res)=>{
+try {
+const {id} = req.params
+  console.log(id)
+const seller = await Seller.findById(id)
+    if(!seller){
+        return res.status(400).json({message:""})
+    }else{
+        return res.status(200).json({seller,message:""})
+
+    }
+} catch (error) {
+    console.log(error.message)
+}
+})
+/***
+GET
+GET SELLER
+*/
+ const updateSellerRole =expressAsyncHandler(async(req,res)=>{
+try {
+    const {id}=req.params
+    const {role}=req.body
+    const updateRoleData = await Seller.findByIdAndUpdate(id,{role},{new:true})
+    if(!updateRoleData){
+        return res.status(400).json({message:"Role Not Updated"})
+    }else{
+        return res.status(200).json({seller:updateRoleData,message:"Role Updated"})
 
     }
 } catch (error) {
@@ -28,7 +73,7 @@ CREATE SELLER
 */
  const createSeller =expressAsyncHandler(async(req,res)=>{
 try {
-    const {name,email,password,pricing,client,salesPerson,employment,totalWithdrawn,emailSignature,website,projects} = req.body
+    const {name,email,password,pricing,client,salesPerson,sellerId,employment,totalWithdrawn,emailSignature,website,projects} = req.body
     const isEmailExist = await Seller.findOne({email})
     if(isEmailExist){
       return res.status(404).json({message:"Email already exist"})
@@ -38,6 +83,16 @@ try {
     if(!seller){
         return res.status(404).json({message:"Seller not create"})
     }else{
+      await Seller.findByIdAndUpdate(
+        sellerId,
+        {
+          $push: {
+            salesPerson: seller?._id // Assuming seller is an object with an _id property
+          }
+        },
+        { new: true } // To return the updated document
+      );
+      
         return res.status(200).json({seller:seller,message:"Seller created"})
 
     }
@@ -136,5 +191,5 @@ LOGIN OUT
 })
 
 module.exports ={
-  createSeller,sellerLogin,getAllSeller,me,LogoutSeller
+  createSeller,sellerLogin,getAllSeller,me,LogoutSeller,updateSellerRole,getSingleSeller
 }

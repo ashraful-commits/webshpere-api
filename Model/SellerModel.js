@@ -47,6 +47,12 @@ default:"user"
     default:[],
     ref:"Project"
 
+ },
+ status:{
+    type:Boolean,
+    default:false,
+    
+
  }
 
 })

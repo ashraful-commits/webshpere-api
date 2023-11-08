@@ -16,23 +16,30 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const page = parseInt(req.query.page) || 1; 
     const limit = parseInt(req.query.limit) ||7; 
+    const role = req.query.role === "admin" ? false : true;
 
     const skip = (page - 1) * limit;
 
-    const client = await Client.find({ sellerId: id })
-      .limit(limit)
-      .skip(skip);
+  const client = await Client.find({ sellerId: id ,status:role})
+  .limit(limit)
+  .skip(skip);
 
-    if (client.length <= 0) {
-      return res.status(400).json({ message: "No client" });
-    } else {
-      return res.status(200).json({ client: client, message: "" });
-    }
+if (client.length <= 0) {
+  return res.status(400).json({ message: "" });
+} else {
+  return res.status(200).json({ client: client, message: "" });
+}
+
+ 
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+/***
+  DELETE
+  DELETE CLIENT
+*/
  const deleteClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
@@ -46,6 +53,10 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
         console.log(error.message)
     }
 })
+/**
+ * GET
+GET SINGLE CLIENT
+ */
  const getSingleClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
@@ -59,6 +70,11 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
         console.log(error.message)
     }
 })
+/**
+  UPDATE
+   PUT 
+   UPDATE CLIENT
+ */
  const updateClient =expressAsyncHandler(async(req,res)=>{
   try {
     const {id} = req.params
@@ -154,6 +170,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
          amount,
          projectDesc,
          timeFrame,
+         
          projectFile: projectFiles? projectFiles : null,
          date,
          paymentReceived,
@@ -181,7 +198,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
    }
  });
 /***
-POST
+PUT
 CREATE CLIENT
 */
 const PermissionUpdated = expressAsyncHandler(async (req, res) => {
@@ -201,6 +218,10 @@ const PermissionUpdated = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+ /**
+  * PROJECT STATUS UPDATE
+ PUT METHOD
+  */
 const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
    try {
      const {id} = req.params
@@ -219,8 +240,26 @@ const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+const updateCommissionRate = expressAsyncHandler(async (req, res) => {
+   try {
+     const {id} = req.params
+     const {commissionRate} = req.body
+
+ const commissionRateData =await Client.findByIdAndUpdate(id,{commissionRate},{new:true})
+       if (!commissionRateData) {
+         return res.status(400).json({ message: "Project Commission not updated" });
+       } else {
+
+         return res.status(200).json({ client: commissionRateData, message: "Commission status updated" });
+       }
+     
+   } catch (error) {
+     console.log(error.message);
+     return res.status(500).json({ message: "Internal Server Error" });
+   }
+ });
  
 
 module.exports ={
-    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate,getSingleClient
+    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate,getSingleClient,updateCommissionRate
 }

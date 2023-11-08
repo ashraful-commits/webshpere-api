@@ -20,6 +20,7 @@ const clientSchema =mongoose.Schema({
         type:String
     },
    
+   
     clientAvatar: {
         type:String
     },
@@ -86,7 +87,8 @@ const clientSchema =mongoose.Schema({
         default:[]
     },
     commissionRate:{
-        type:Number
+        type:String,
+        default:"15%"
     }, 
     projectStatus:{
         type:String
