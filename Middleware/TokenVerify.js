@@ -19,10 +19,13 @@ const accessToken = req.cookies.accessToken
       expressAsyncHandler(async (err, decode) => {
         if(err) res.status(404).json({ message: "Not user" });
         const me = await Seller.findOne({ email: decode?.email }).populate({path:"client",
-        model:"Client",populate:{
+        model:"Client"}).populate({
           path:"projects",
-          model:"Project"
-        }});
+          model:"Client"
+        }).populate({
+          path:"salesPerson",
+          model:"Seller"
+        });
         req.me = me;
         next();
       })

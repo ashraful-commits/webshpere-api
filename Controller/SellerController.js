@@ -13,9 +13,11 @@ try {
 
   const page = parseInt(req.query.page) || 1; 
   const limit = parseInt(req.query.limit) ||7; 
-  const role = req.query.role === "admin" ? false : true;
+  const role = req.query.role ||"user"
   const skip = (page - 1) * limit;
-    const seller = await Seller.find({status:role})
+
+  if(role==="admin"){
+    const seller = await Seller.find().sort({ timestamp: -1 })
     .limit(limit)
     .skip(skip);
 
@@ -25,6 +27,10 @@ try {
         return res.status(200).json({seller,message:""})
 
     }
+  }else{
+    return res.status(400).json({message:""})
+  }
+  
 } catch (error) {
     console.log(error.message)
 }
@@ -36,8 +42,15 @@ GET SINGLE SELLER
  const getSingleSeller =expressAsyncHandler(async(req,res)=>{
 try {
 const {id} = req.params
-  console.log(id)
-const seller = await Seller.findById(id)
+
+const seller = await Seller.findById(id).populate({path:"client",
+model:"Client"}).populate({
+  path:"projects",
+  model:"Client"
+}).populate({
+  path:"salesPerson",
+  model:"Seller"
+})
     if(!seller){
         return res.status(400).json({message:""})
     }else{
@@ -63,6 +76,86 @@ try {
         return res.status(200).json({seller:updateRoleData,message:"Role Updated"})
 
     }
+} catch (error) {
+    console.log(error.message)
+}
+})
+/***
+DELETE
+DELETE SELLER
+*/
+const deleteSeller = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id ,sellerId} = req.params;
+
+console.log(id,sellerId)
+    const deletedSeller = await Seller.findByIdAndDelete(id);
+
+    if (!deletedSeller) {
+      return res.status(400).json({ message: "Role Not Updated" });
+    }else{
+      if (sellerId) {
+    const updatedata=   await Seller.findByIdAndUpdate(
+          sellerId,
+          { $pull: { salesPerson: deletedSeller._id } },
+          { new: true }
+        );
+
+      }
+      return res.status(200).json({ seller: deletedSeller, message: "Seller deleted" });
+    }
+
+    
+  
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/***
+PUT METHOD
+UPDATE SELLER STATUS
+*/
+ const updateSellerStatus =expressAsyncHandler(async(req,res)=>{
+try {
+    const {id}=req.params
+    const {status}=req.body
+  
+    const updateRoleData = await Seller.findByIdAndUpdate(id,{status},{new:true})
+    if(!updateRoleData){
+        return res.status(400).json({message:"Status Not Updated"})
+    }else{
+        return res.status(200).json({seller:updateRoleData,message:"Status Updated"})
+
+    }
+} catch (error) {
+    console.log(error.message)
+}
+})
+/***
+PUT METHOD
+UPDATE SELLER STATUS
+*/
+ const updateSeller =expressAsyncHandler(async(req,res)=>{
+  try {
+    const {id} = req.params
+    const {name,email,employment,website} = req.body
+  
+  let sellerAvatar ;
+    if(req.file){
+       sellerAvatar = await cloudUploads(req.file.path)
+    }
+    const seller = await Seller.findByIdAndUpdate(id,{name,email,employment,website , avatar:sellerAvatar},{new:true})
+    if(!seller){
+        return res.status(404).json({message:"Seller not Update"})
+    }else{
+      
+        return res.status(200).json({seller:seller,message:"Update Seller"})
+
+    }
+  
 } catch (error) {
     console.log(error.message)
 }
@@ -191,5 +284,5 @@ LOGIN OUT
 })
 
 module.exports ={
-  createSeller,sellerLogin,getAllSeller,me,LogoutSeller,updateSellerRole,getSingleSeller
+  createSeller,sellerLogin,getAllSeller,me,LogoutSeller,updateSellerRole,getSingleSeller,updateSellerStatus,deleteSeller,updateSeller
 }

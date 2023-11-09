@@ -16,24 +16,27 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const page = parseInt(req.query.page) || 1; 
     const limit = parseInt(req.query.limit) ||7; 
-    const role = req.query.role === "admin" ? false : true;
-
+    const role = req.query.role ||"user"
     const skip = (page - 1) * limit;
-
-  const client = await Client.find({ sellerId: id ,status:role})
-  .limit(limit)
-  .skip(skip);
-
-if (client.length <= 0) {
-  return res.status(400).json({ message: "" });
-} else {
-  return res.status(200).json({ client: client, message: "" });
-}
+    if(role==="admin"){
+      const client = await Client.find().sort({ timestamp: -1 })
+      .limit(limit)
+      .skip(skip);
+    
+    if (client.length <= 0) {
+      return res.status(400).json({ message: "" });
+    } else {
+      return res.status(200).json({ client: client, message: "" });
+    }
+    }else{
+      return res.status(400).json({ message: "" });
+    }
+  
 
  
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "" });
+    
   }
 });
 /***
@@ -186,9 +189,14 @@ const createClient = expressAsyncHandler(async (req, res) => {
        });
  
        if (!clientData) {
-         return res.status(400).json({ message: "No client created" });
-       } else {
+      
+        return res.status(400).json({ message: "No client created" });
 
+       } else {
+        await Seller.findByIdAndUpdate(sellerId,{$push:{
+          client:clientData?._id,
+          projects:clientData?._id
+        }}) 
          return res.status(200).json({ client: clientData, message: "Client created" });
        }
      
