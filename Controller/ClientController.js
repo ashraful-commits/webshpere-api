@@ -46,10 +46,22 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
  const deleteClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
+    
         const client = await Client.findByIdAndDelete(id)
         if(!client){
            return res.status(400).json({message:"Not client deleted"})
         }else{
+  
+          const updateSeller = await Seller.updateMany(
+            { $or: [{ client: client?._id }, { projects: client?._id }] },
+            {
+              $pull: {
+                client: client?._id,
+                projects: client?._id,
+              },
+            }
+          );
+          console.log(updateSeller)
            return res.status(200).json({client:client,message:"client deleted"}) 
         }
     } catch (error) {
