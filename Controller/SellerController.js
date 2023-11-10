@@ -49,7 +49,21 @@ model:"Client"}).populate({
   model:"Client"
 }).populate({
   path:"salesPerson",
-  model:"Seller"
+  model:"Seller",
+  populate: [
+    {
+      path: "client",
+      model: "Client"
+    },
+    {
+      path: "projects",
+      model: "Project" 
+    },
+    {
+      path: "salesPerson",
+      model: "Seller" 
+    }
+  ]
 })
     if(!seller){
         return res.status(400).json({message:""})

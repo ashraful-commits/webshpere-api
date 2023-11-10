@@ -88,7 +88,7 @@ const clientSchema =mongoose.Schema({
     },
     commissionRate:{
         type:String,
-        default:"15%"
+        default:"15"
     }, 
     projectStatus:{
         type:String

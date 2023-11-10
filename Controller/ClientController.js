@@ -30,10 +30,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     }
     }else{
       return res.status(400).json({ message: "" });
-    }
-  
-
- 
+    } 
   } catch (error) {
     console.error(error);
     
