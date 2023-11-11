@@ -19,8 +19,6 @@ const clientSchema =mongoose.Schema({
     clientAddress: {
         type:String
     },
-   
-   
     clientAvatar: {
         type:String
     },
@@ -52,17 +50,18 @@ const clientSchema =mongoose.Schema({
         type:String
     },
     timeFrame: {
-        type:String
+        type:String,
+        default:"30 days"
     },
-    
     projectFile: {
         type:Array
     },
     date: {
-        type:String
+        type:String,
     },
-    document: {
-        type:Array
+    tools: {
+        type:Array,
+        default:[]
     },
     paymentReceived:{
         type:Number

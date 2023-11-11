@@ -3,22 +3,28 @@ const mongoose =require("mongoose");
 const sellerSchema =mongoose.Schema({
  name:{
     type:String,
+    trim:true
  },
  role:{
 type:String,
-default:"user"
+default:"user",
+trim:true
  },
  email:{
-    type:String
+    type:String,
+    trim:true
  },
  password:{
-    type:String
+    type:String,
+    trim:true
  },
  pricing:{
-    type:String
+    type:String,
+    trim:true
  },
  avatar:{
-    type:String
+    type:String,
+    trim:true
  },
  client:{
     type:[mongoose.Schema.Types.ObjectId],
@@ -31,16 +37,19 @@ default:"user"
     ref:"Seller"
  },
  employment:{
-    type:String
+    type:String,
+    trim:true
  },
  totalWithdrawn:{
-    type:Number
+    type:Number,
+    default:0
  },
  emailSignature:{
     type:String
  },
  website:{
-    type:String
+    type:String,
+    trim:true
  },
  projects:{
     type:[mongoose.Schema.Types.ObjectId],
@@ -48,11 +57,13 @@ default:"user"
     ref:"Client"
 
  },
+ payment:{
+type:Array,
+default:[]
+ },
  status:{
     type:Boolean,
     default:false,
-    
-
  }
 
 })

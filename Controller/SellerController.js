@@ -1,9 +1,10 @@
 const expressAsyncHandler = require("express-async-handler")
 const { Seller } = require("../Model/SellerModel")
-const { cloudUploads } = require("../Utils/Cloudinary")
+const { cloudUploads, cloudDelete } = require("../Utils/Cloudinary")
 const {makeHash} = require("../Utils/CreateHashPassword")
 const {comparePasswords} = require("../Utils/PassWordCompare")
 const {makeToken} = require("../Utils/CreateToken")
+const publicIdGenerator = require("../Utils/PublicKeyGeneretor")
 /***
 GET
 GET SELLER
@@ -66,9 +67,9 @@ model:"Client"}).populate({
   ]
 })
     if(!seller){
-        return res.status(400).json({message:""})
+        return res.status(400).json({message:"No seller"})
     }else{
-        return res.status(200).json({seller,message:""})
+        return res.status(200).json({seller})
 
     }
 } catch (error) {
@@ -102,14 +103,15 @@ const deleteSeller = expressAsyncHandler(async (req, res) => {
   try {
     const { id ,sellerId} = req.params;
 
-console.log(id,sellerId)
+
     const deletedSeller = await Seller.findByIdAndDelete(id);
 
     if (!deletedSeller) {
       return res.status(400).json({ message: "Role Not Updated" });
     }else{
+      await cloudDelete(publicIdGenerator(deletedSeller.avatar))
       if (sellerId) {
-    const updatedata=   await Seller.findByIdAndUpdate(
+     await Seller.findByIdAndUpdate(
           sellerId,
           { $pull: { salesPerson: deletedSeller._id } },
           { new: true }
@@ -160,6 +162,10 @@ UPDATE SELLER STATUS
   let sellerAvatar ;
     if(req.file){
        sellerAvatar = await cloudUploads(req.file.path)
+    }
+    const updateFile = await Seller.findById(id)
+    if(req.file){
+      await cloudDelete(publicIdGenerator(updateFile.avatar))
     }
     const seller = await Seller.findByIdAndUpdate(id,{name,email,employment,website , avatar:sellerAvatar},{new:true})
     if(!seller){

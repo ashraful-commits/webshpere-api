@@ -26,8 +26,19 @@ cloudinary.v2.config({
  
    return data
 } 
-
+const cloudDownload = (publicId, fileFormat) => {
+   try {
+     const signedUrl = cloudinary.utils.private_download_url(publicId, fileFormat, {
+       type: 'authenticated',
+       secure: true,
+     });
+     return signedUrl;
+   } catch (error) {
+     console.error('Error generating signed download URL:', error.message);
+     throw error;
+   }
+ };
 
 module.exports ={
-  cloudUploads,cloudDelete,cloudUpload
+  cloudUploads,cloudDelete,cloudUpload,cloudDownload
 }
