@@ -257,7 +257,7 @@ try {
               res
                 .cookie("accessToken", Token, {
                   httpOnly: true,
-                  secure:  true,
+                  secure: process.env.APP_ENV === "development" ? false : true,
                   sameSite:"Lax",
                   path:"/",
                   maxAge: 1000 * 60 * 60 * 24 * 7,
