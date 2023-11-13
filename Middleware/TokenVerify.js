@@ -7,7 +7,7 @@ const { Seller } = require("../Model/SellerModel");
 
  const tokenVerify = (req, res, next) => {
  
-const accessToken = req.cookies.accessToken
+  const accessToken = req.cookies.accessToken || req.headers.authorization;
 
   if (!accessToken) {
    return res.status(404).json({ message: "not authorize" });
