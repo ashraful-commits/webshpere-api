@@ -6,7 +6,7 @@ const { Seller } = require("../Model/SellerModel");
 
 
  const tokenVerify = (req, res, next) => {
-  // const token = req.headers.authorization || req.headers.Authorization;
+ 
 const accessToken = req.cookies.accessToken
 
   if (!accessToken) {
