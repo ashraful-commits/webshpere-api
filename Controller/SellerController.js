@@ -257,7 +257,7 @@ try {
               res
                 .cookie("accessToken", Token, {
                   httpOnly: true,
-                  secure: process.env.APP_ENV === "development" ? false : true,
+                  secure: req.headers['x-forwarded-proto'] === 'https',
                   sameSite:"strict",
                   domain: 'wordsphere.vercel.app', 
                   path: '/',
