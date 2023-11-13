@@ -303,7 +303,7 @@ LOGIN OUT
     .clearCookie("accessToken", {
       
         httpOnly: true,
-        secure: process.env.APP_ENV === "production",
+        secure: process.env.APP_ENV === "production"?true:false,
         sameSite:"strict",
         maxAge: 1000 * 60 * 60 * 24 * 7,
     
