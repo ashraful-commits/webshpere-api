@@ -257,7 +257,7 @@ try {
               res
                 .cookie("accessToken", Token, {
                   httpOnly: true,
-                  secure: process.env.APP_ENV === "production" ? true : false,
+                  secure:  true,
                   sameSite:"strict",
                   domain: 'wordsphere.vercel.app', 
                   path: '/',
