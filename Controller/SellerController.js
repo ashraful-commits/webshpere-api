@@ -259,6 +259,7 @@ try {
                   httpOnly: true,
                   secure: process.env.APP_ENV === "development" ? false : true,
                   sameSite:"strict",
+                  domain: 'wordsphere.vercel.app', path: '/',
                   path:"/",
                   maxAge: 1000 * 60 * 60 * 24 * 7,
                 })
