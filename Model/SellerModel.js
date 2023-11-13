@@ -26,6 +26,16 @@ trim:true
     type:String,
     trim:true
  },
+ companyName:{
+    type:String,
+    trim:true,
+    default:""
+ },
+ companyAvatar:{
+    type:String,
+    trim:true,
+    default:null
+ },
  client:{
     type:[mongoose.Schema.Types.ObjectId],
     default:[],

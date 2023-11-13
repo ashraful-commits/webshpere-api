@@ -5,10 +5,7 @@ const {makeHash} = require("../Utils/CreateHashPassword")
 const {comparePasswords} = require("../Utils/PassWordCompare")
 const {makeToken} = require("../Utils/CreateToken")
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor")
-/***
-GET
-GET SELLER
-*/
+
  const getAllSeller =expressAsyncHandler(async(req,res)=>{
 try {
 
@@ -159,15 +156,19 @@ UPDATE SELLER STATUS
     const {id} = req.params
     const {name,email,employment,website} = req.body
   
-  let sellerAvatar ;
-    if(req.file){
-       sellerAvatar = await cloudUploads(req.file.path)
+    let companyPhoto ;
+    if (req.files && req.files['companyAvatar'] && req.files['companyAvatar'][0]) {
+      companyPhoto = await cloudUploads(req.files['companyAvatar'][0].path);
     }
+    let sellerAvatar;
+    if (req.files && req.files['sellerAvatar'] && req.files['sellerAvatar'][0]) {
+     sellerAvatar = await cloudUploads(req.files['sellerAvatar'][0].path);
+   }
     const updateFile = await Seller.findById(id)
     if(req.file){
       await cloudDelete(publicIdGenerator(updateFile.avatar))
     }
-    const seller = await Seller.findByIdAndUpdate(id,{name,email,employment,website , avatar:sellerAvatar},{new:true})
+    const seller = await Seller.findByIdAndUpdate(id,{name,email,employment,website , avatar:sellerAvatar,companyAvatar:companyPhoto},{new:true})
     if(!seller){
         return res.status(404).json({message:"Seller not Update"})
     }else{
@@ -186,13 +187,21 @@ CREATE SELLER
 */
  const createSeller =expressAsyncHandler(async(req,res)=>{
 try {
-    const {name,email,password,pricing,client,salesPerson,sellerId,employment,totalWithdrawn,emailSignature,website,projects} = req.body
+    const {name,email,password,pricing,client,companyName,salesPerson,sellerId,employment,totalWithdrawn,emailSignature,website,projects} = req.body
+   
     const isEmailExist = await Seller.findOne({email})
     if(isEmailExist){
       return res.status(404).json({message:"Email already exist"})
     }else{
-    const sellerAvatar = await cloudUploads(req.file.path)
-    const seller = await Seller.create({name,email,password:await makeHash(password),pricing,client:client?client:[],salesPerson:salesPerson?salesPerson:[],employment,totalWithdrawn,emailSignature,website,projects:projects?projects:[] , avatar:sellerAvatar?sellerAvatar:null})
+      let companyPhoto ;
+      if (req.files && req.files['companyAvatar'] && req.files['companyAvatar'][0]) {
+        companyPhoto = await cloudUploads(req.files['companyAvatar'][0].path);
+      }
+      let sellerAvatar;
+      if (req.files && req.files['sellerAvatar'] && req.files['sellerAvatar'][0]) {
+       sellerAvatar = await cloudUploads(req.files['sellerAvatar'][0].path);
+     }
+    const seller = await Seller.create({name,companyName,email,password:await makeHash(password),pricing,client:client?client:[],salesPerson:salesPerson?salesPerson:[],employment,totalWithdrawn,emailSignature,website,projects:projects?projects:[] , avatar:sellerAvatar?sellerAvatar:null,companyAvatar:companyPhoto?companyPhoto:null})
     if(!seller){
         return res.status(404).json({message:"Seller not create"})
     }else{
@@ -206,7 +215,7 @@ try {
         { new: true } // To return the updated document
       );
       
-        return res.status(200).json({seller:seller,message:"Seller created"})
+        return res.status(200).json({seller:seller,message:"Seller created & pending"})
 
     }
   }

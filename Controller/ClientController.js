@@ -220,7 +220,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
           client:clientData?._id,
           projects:clientData?._id
         }}) 
-         return res.status(200).json({ client: clientData, message: "Client created" });
+         return res.status(200).json({ client: clientData, message: "Client created & pending" });
        }
      
    } catch (error) {
