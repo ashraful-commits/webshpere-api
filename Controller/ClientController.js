@@ -81,7 +81,7 @@ GET SINGLE CLIENT
         if(!client){
            return res.status(400).json({message:"Not client"})
         }else{
-           return res.status(200).json({client:client,message:" "}) 
+           return res.status(200).json({client:client,message:""}) 
         }
     } catch (error) {
         console.log(error.message)
