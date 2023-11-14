@@ -302,8 +302,8 @@ LOGIN OUT
     res
     .clearCookie("accessToken", {
         httpOnly: true,
-        secure: process.env.APP_ENV === "development"?false:true,
-        sameSite:"strict",
+        secure: true,
+        sameSite:"Strict",
         maxAge: 1000 * 60 * 60 * 24 * 7,
     })
     .json({ message: "Logout success!" });
