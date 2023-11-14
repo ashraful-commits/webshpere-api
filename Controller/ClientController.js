@@ -77,7 +77,11 @@ GET SINGLE CLIENT
  const getSingleClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
-        const client = await Client.findById(id).populate({path:"sellerId",model:Seller})
+        const client = await Client.findById(id).populate([
+          { path: 'sellerId', model: 'Seller', 
+            populate: { path: 'salesPerson', model: 'Seller' }
+          },{path:'team',model:'Seller'}
+        ])
         if(!client){
            return res.status(400).json({message:"Not client"})
         }else{
@@ -97,7 +101,6 @@ GET SINGLE CLIENT
     const {id} = req.params
     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate } = req.body;
     const projectFiles = []
-    
 
       if (req.files && Array.isArray(req.files['projectFile'])) {
         for (let i = 0; i < req.files['projectFile'].length; i++) {
@@ -143,7 +146,7 @@ GET SINGLE CLIENT
          projectSource,
          invoices,
          comments,
-         team,
+         team:team||[],
          feedBack,
          commissionRate,
          projectStatus:"pending",

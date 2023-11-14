@@ -77,8 +77,8 @@ const clientSchema =mongoose.Schema({
         default:[]
     },
     team:{
-        type:[mongoose.Schema.Types.ObjectId]
-        ,
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Seller",
         default:[]
     },
     feedBack:{
