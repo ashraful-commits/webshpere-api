@@ -23,7 +23,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
       .skip(skip).sort({ timestamp: -1 }).exec();
     
     if (client.length<=0) {
-      return res.status(400).json({ message: "No Client" });
+      return res.status(400).json({ message: "" });
     } else {
       return res.status(200).json({ client: client});
     }
