@@ -257,7 +257,7 @@ try {
               res
                 .cookie("accessToken", Token, {
                   httpOnly: true,
-                  secure: process.env.APP_ENV === "production",
+                  secure: process.env.APP_ENV === "development"?false:false,
                   sameSite:"strict",
                   maxAge: 1000 * 60 * 60 * 24 * 7,
                 })
@@ -301,12 +301,10 @@ LOGIN OUT
   try {
     res
     .clearCookie("accessToken", {
-      
         httpOnly: true,
-        secure: process.env.APP_ENV === "production"?true:false,
-        sameSite:"none",
+        secure: process.env.APP_ENV === "development"?false:true,
+        sameSite:"strict",
         maxAge: 1000 * 60 * 60 * 24 * 7,
-    
     })
     .json({ message: "Logout success!" });
   } catch (error) {
