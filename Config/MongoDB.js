@@ -1,5 +1,5 @@
 const mongoose =require("mongoose")
-
+//=================================== mongodb connection 
  const MongoDBConnection =()=>{
  try {
   const connection = mongoose.connect(process.env.MONGO_URL)
@@ -8,5 +8,5 @@ const mongoose =require("mongoose")
     console.log(error.message)
  }
 }
-
+//=================================== export 
 module.exports={MongoDBConnection}

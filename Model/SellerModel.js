@@ -1,5 +1,5 @@
 const mongoose =require("mongoose");
-
+//======================= sellerSchema
 const sellerSchema =mongoose.Schema({
  name:{
     type:String,
@@ -77,7 +77,7 @@ default:[]
  }
 
 })
-
+//==============================export model
 const Seller = mongoose.model("Seller",sellerSchema)
 module.exports={
    Seller

@@ -1,3 +1,6 @@
+/**
+  * IMPORT ALL TOOLS
+  */
 const expressAsyncHandler = require("express-async-handler")
 const { Seller } = require("../Model/SellerModel")
 const { cloudUploads, cloudDelete } = require("../Utils/Cloudinary")
@@ -5,7 +8,10 @@ const {makeHash} = require("../Utils/CreateHashPassword")
 const {comparePasswords} = require("../Utils/PassWordCompare")
 const {makeToken} = require("../Utils/CreateToken")
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor")
-
+/**
+  * GET ALL SELLER
+  * GET METHOD
+  */
  const getAllSeller =expressAsyncHandler(async(req,res)=>{
 try {
 
@@ -33,9 +39,9 @@ try {
     console.log(error.message)
 }
 })
-/***
-GET
-GET SINGLE SELLER
+/**
+* GET
+* GET SINGLE SELLER
 */
  const getSingleSeller =expressAsyncHandler(async(req,res)=>{
 try {
@@ -73,10 +79,10 @@ model:"Client"}).populate({
     console.log(error.message)
 }
 })
-/***
-GET
-GET SELLER
-*/
+/**
+  * UPDATE SELLER ROLE
+  * PUT METHOD
+  */
  const updateSellerRole =expressAsyncHandler(async(req,res)=>{
 try {
     const {id}=req.params
@@ -92,9 +98,9 @@ try {
     console.log(error.message)
 }
 })
-/***
-DELETE
-DELETE SELLER
+/**
+* DELETE
+* DELETE SELLER
 */
 const deleteSeller = expressAsyncHandler(async (req, res) => {
   try {
@@ -128,8 +134,8 @@ const deleteSeller = expressAsyncHandler(async (req, res) => {
 });
 
 /***
-PUT METHOD
-UPDATE SELLER STATUS
+* PATCH METHOD
+* UPDATE SELLER STATUS
 */
  const updateSellerStatus =expressAsyncHandler(async(req,res)=>{
 try {
@@ -147,9 +153,9 @@ try {
     console.log(error.message)
 }
 })
-/***
-PUT METHOD
-UPDATE SELLER STATUS
+/**
+* PUT METHOD
+* UPDATE SELLER STATUS
 */
  const updateSeller =expressAsyncHandler(async(req,res)=>{
   try {
@@ -181,10 +187,10 @@ UPDATE SELLER STATUS
     console.log(error.message)
 }
 })
-/***
-POST
-CREATE SELLER
-*/
+/**
+  * CREATE SELLER OR REGISTER SELLER
+  * POST METHOD
+  */
  const createSeller =expressAsyncHandler(async(req,res)=>{
 try {
     const {name,email,password,pricing,client,companyName,salesPerson,sellerId,employment,totalWithdrawn,emailSignature,website,projects} = req.body
@@ -223,10 +229,10 @@ try {
     console.log(error.message)
 }
 })
-/***
-POST
-LOGIN SELLER
-*/
+/**
+  * SELLER LOGIN
+  * POST METHOD
+  */
  const sellerLogin =expressAsyncHandler(async(req,res)=>{
 try {
     const {email,password} = req.body
@@ -274,10 +280,10 @@ try {
     console.log(error)
 }
 })
-/***
-GET
-LOGIN SELLER
-*/
+/**
+  * GET LOGIN SELLER
+  * GET METHOD
+  */
  const me =expressAsyncHandler(async(req,res)=>{
   try {
     if(!req.me){
@@ -289,15 +295,11 @@ LOGIN SELLER
     console.log(error)
   }
 })
-
-module.exports ={
-  createSeller,sellerLogin,getAllSeller,me
-}
 /***
-GET
-LOGIN OUT
+* GET
+* LOGIN OUT
 */
- const LogoutSeller =expressAsyncHandler(async(req,res)=>{
+const LogoutSeller =expressAsyncHandler(async(req,res)=>{
   try {
     res
     .clearCookie("accessToken", {
@@ -312,6 +314,9 @@ LOGIN OUT
   }
 })
 
+/**
+ * EXPORT ALL SELLER CONTROLLERS
+ */
 module.exports ={
   createSeller,sellerLogin,getAllSeller,me,LogoutSeller,updateSellerRole,getSingleSeller,updateSellerStatus,deleteSeller,updateSeller
 }

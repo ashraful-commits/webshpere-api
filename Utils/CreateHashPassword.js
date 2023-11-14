@@ -5,4 +5,5 @@ const bcryptjs =require("bcryptjs");
   return hashPass;
 };
 
+//==============================export makeHash
 module.exports ={makeHash}

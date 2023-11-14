@@ -1,18 +1,17 @@
 const jwt =require("jsonwebtoken");
 const expressAsyncHandler =require("express-async-handler");
 const { Seller } = require("../Model/SellerModel");
-
-
-
-
+/**
+*TOKEN VERIFY FUNCTION
+*/
  const tokenVerify = (req, res, next) => {
- 
+ //============================accessToken 
   const accessToken = req?.cookies?.accessToken || req?.headers?.authorization;
-
+//============================= Not accessToken
   if (!accessToken) {
    return res.status(404).json({ message: "not authorize" });
   } 
-
+//================================== check Token
   const checkToken=  jwt.verify(
       accessToken,
       process.env.JWT_SECRECT,
@@ -32,7 +31,7 @@ const { Seller } = require("../Model/SellerModel");
     );
   
 };
-
+//===================================export
 module.exports={
   tokenVerify
 }

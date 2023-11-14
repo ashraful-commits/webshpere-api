@@ -7,4 +7,5 @@ const bcrypt =require("bcryptjs")
       throw error;
     }
   }
+  //======================================comparePasswords
 module.exports = {comparePasswords}

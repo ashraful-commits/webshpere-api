@@ -1,16 +1,17 @@
 
-
-/***
-GET
-GET CLIENT
-*/
+/**
+ * EXPORT ALL RESOURCE
+ */
 
 const expressAsyncHandler = require("express-async-handler")
 const { Client } = require("../Model/ClientModel")
 const { Seller } = require("../Model/SellerModel")
 const { cloudUploads, cloudDownload, cloudDelete } = require("../Utils/Cloudinary");
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor");
-
+/*
+ * GET ALL CLIENT
+ * GET METHOD
+ */
 const getAllClient = expressAsyncHandler(async (req, res) => {
   try {
     // const { id } = req.params;
@@ -18,7 +19,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit) ||7; 
     // const role = req.query.role ||"user"
     const skip = (page - 1) * limit;
-      const client = await Client.find()
+      const client = await Client.find().populate({path:"sellerId",model:"Seller"})
       .limit(limit)
       .skip(skip).sort({ timestamp: -1 }).exec();
     
@@ -33,10 +34,10 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     
   }
 });
-/***
-  DELETE
-  DELETE CLIENT
-*/
+/**
+ * DELETE CLIENT
+ * DELETE METHOD
+ */
  const deleteClient =expressAsyncHandler(async(req,res)=>{
     try {
       const {id} = req.params
@@ -72,7 +73,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
 })
 /**
  * GET
-GET SINGLE CLIENT
+ * GET SINGLE CLIENT
  */
  const getSingleClient =expressAsyncHandler(async(req,res)=>{
     try {
@@ -92,9 +93,9 @@ GET SINGLE CLIENT
     }
 })
 /**
-  UPDATE
-   PUT 
-   UPDATE CLIENT
+  * UPDATE
+  * PUT METHOD
+  * UPDATE CLIENT
  */
  const updateClient =expressAsyncHandler(async(req,res)=>{
   try {
@@ -163,9 +164,9 @@ GET SINGLE CLIENT
     return res.status(500).json({ message: "Internal Server Error" });
   }
 })
-/***
-POST
-CREATE CLIENT
+/**
+*POST
+*CREATE CLIENT
 */
 const createClient = expressAsyncHandler(async (req, res) => {
    try {
@@ -232,8 +233,8 @@ const createClient = expressAsyncHandler(async (req, res) => {
    }
  });
 /***
-PUT
-CREATE CLIENT
+ * PATCH METHOD
+ * CREATE CLIENT
 */
 const PermissionUpdated = expressAsyncHandler(async (req, res) => {
    try {
@@ -254,7 +255,7 @@ const PermissionUpdated = expressAsyncHandler(async (req, res) => {
  });
  /**
   * PROJECT STATUS UPDATE
- PUT METHOD
+  * PATCH METHOD
   */
 const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
    try {
@@ -274,6 +275,10 @@ const projectStatusUpdate = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+ /**
+  * PROJECT COMMISSION
+  * PATCH METHOD
+  */
 const updateCommissionRate = expressAsyncHandler(async (req, res) => {
    try {
      const {id} = req.params
@@ -292,6 +297,10 @@ const updateCommissionRate = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+ /**
+  * FILE DOWNLOAD
+  * GET METHOD
+  */
 const fileDownload = expressAsyncHandler(async (req, res) => {
    try {
     const { url, fileFormat } = req.params;

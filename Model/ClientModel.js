@@ -1,5 +1,5 @@
 const mongoose =require("mongoose");
-
+//=======================================schema
 const clientSchema =mongoose.Schema({
     clientName: {
         type:String
@@ -105,6 +105,7 @@ const clientSchema =mongoose.Schema({
     },
 },{timestamp:true})
 
+//========================================export schema
 const Client = mongoose.model("Client",clientSchema)
 module.exports={
     Client

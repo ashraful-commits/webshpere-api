@@ -8,7 +8,9 @@
       name: error.name,
     });
   };
-  
+  /**
+   * EXPORT ERRORHANDLER
+   */
 module.exports ={
   ErrorHandler
 }

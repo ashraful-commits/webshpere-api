@@ -3,4 +3,5 @@ const jwt =require("jsonwebtoken");
   const jwtToken = jwt.sign(data, jwtF, { expiresIn: exp });
   return jwtToken;
 };
+//========================================makeToken
 module.exports = {makeToken}

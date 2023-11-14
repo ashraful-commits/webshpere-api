@@ -1,5 +1,7 @@
 const multer =require("multer")
-
+/**
+ * STORAGE CREATE
+ */
 const Storages = multer.diskStorage({
     filename:(req,file,cb)=>{
       cb(null,Date.now()+ Math.round(Math.random()*10000)+ "-" + file.fieldname)
@@ -7,21 +9,36 @@ const Storages = multer.diskStorage({
     },
   
   })
+/**
+ * CLIENT  AVATAR MULTER
+ */
    const clientAvatar = multer({
     storage:Storages
   }).single("clientAvatar")
+/**
+ * SELLER  AVATAR MULTER
+ */
    const sellerAvatar = multer({
     storage:Storages
   }).single("sellerAvatar")
+/**
+ * PROJECT FILE  MULTER
+ */
    const projectFiles = multer({
     storage:Storages
   }).array("projectFile",20)
+/**
+ * CLIENT  MULTIPLE MULTER
+ */
    const multipleFields = multer({
     storage:Storages
   }).fields([
     {name:"projectFile",maxCount:10},
     {name:"clientAvatar"},
   ])
+  /**
+  * SELLER  MULTIPLE MULTER
+  */
    const sellerMultiAvatar = multer({
     storage:Storages
   }).fields([
