@@ -258,7 +258,7 @@ try {
                 .cookie("accessToken", Token, {
                   httpOnly: true,
                   secure: process.env.APP_ENV === "development"?false:true,
-                  sameSite:"strict",
+                  sameSite:"Lax",
                   maxAge: 1000 * 60 * 60 * 24 * 7,
                 })
                 .status(200)
@@ -303,7 +303,7 @@ LOGIN OUT
     .clearCookie("accessToken", {
       httpOnly: true,
       secure: process.env.APP_ENV === "development"?false:true,
-      sameSite:"strict",
+      sameSite:"Lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     })
     .json({ message: "Logout success!" });
