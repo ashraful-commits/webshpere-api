@@ -257,7 +257,7 @@ try {
               res
                 .cookie("accessToken", Token, {
                   httpOnly: true,
-                  secure: process.env.APP_ENV === "development"?false:false,
+                  secure: process.env.APP_ENV === "development"?false:true,
                   sameSite:"strict",
                   maxAge: 1000 * 60 * 60 * 24 * 7,
                 })
@@ -302,7 +302,7 @@ LOGIN OUT
     res
     .clearCookie("accessToken", {
       httpOnly: true,
-      secure: process.env.APP_ENV === "development"?false:false,
+      secure: process.env.APP_ENV === "development"?false:true,
       sameSite:"strict",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     })
