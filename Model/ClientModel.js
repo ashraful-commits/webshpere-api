@@ -103,7 +103,7 @@ const clientSchema =mongoose.Schema({
         type:Boolean,
         default:false
     },
-},{timestamp:true})
+},{timestamps:true})
 
 //========================================export schema
 const Client = mongoose.model("Client",clientSchema)

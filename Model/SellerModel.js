@@ -36,6 +36,15 @@ trim:true
     trim:true,
     default:null
  },
+ following:{
+   type:[mongoose.Schema.Types.ObjectId],
+   ref:"Seller",
+   default:[]
+ },
+ archive:{
+   type:Array,
+   default:[]
+ },
  client:{
     type:[mongoose.Schema.Types.ObjectId],
     default:[],
@@ -76,7 +85,7 @@ default:[]
     default:false,
  }
 
-})
+},{timestamps:true})
 //==============================export model
 const Seller = mongoose.model("Seller",sellerSchema)
 module.exports={

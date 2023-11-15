@@ -21,7 +21,7 @@ try {
   const skip = (page - 1) * limit;
 
   if(role==="admin"){
-    const seller = await Seller.find().sort({ timestamp: -1 })
+    const seller = await Seller.find().sort({ createdAt: -1 })
     .limit(limit)
     .skip(skip);
 

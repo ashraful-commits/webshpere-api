@@ -21,7 +21,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
     const skip = (page - 1) * limit;
       const client = await Client.find().populate({path:"sellerId",model:"Seller"})
       .limit(limit)
-      .skip(skip).sort({ timestamp: -1 }).exec();
+      .skip(skip).sort({ createdAt: -1 })
     
     if (client.length<=0) {
       return res.status(400).json({ message: "" });
@@ -100,7 +100,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
  const updateClient =expressAsyncHandler(async(req,res)=>{
   try {
     const {id} = req.params
-    const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate } = req.body;
+    const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName, client, projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team,tools, feedBack, commissionRate } = req.body;
     const projectFiles = []
 
       if (req.files && Array.isArray(req.files['projectFile'])) {
@@ -148,6 +148,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
          invoices,
          comments,
          team:team||[],
+         tools:tools||[],
          feedBack,
          commissionRate,
          projectStatus:"pending",
