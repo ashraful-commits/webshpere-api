@@ -48,7 +48,10 @@ try {
 const {id} = req.params
 
 const seller = await Seller.findById(id).populate({path:"client",
-model:"Client"}).populate({
+model:"Client", populate:{
+  path:"team",
+  model:"Seller"
+}}).populate({
   path:"projects",
   model:"Client"
 }).populate({
@@ -57,7 +60,8 @@ model:"Client"}).populate({
   populate: [
     {
       path: "client",
-      model: "Client"
+      model: "Client",
+    
     },
     {
       path: "projects",
