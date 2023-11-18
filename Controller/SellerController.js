@@ -8,6 +8,7 @@ const {makeHash} = require("../Utils/CreateHashPassword")
 const {comparePasswords} = require("../Utils/PassWordCompare")
 const {makeToken} = require("../Utils/CreateToken")
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor")
+const sendEMail = require("../Middleware/SendMail")
 /**
   * GET ALL SELLER
   * GET METHOD
@@ -211,6 +212,9 @@ try {
       if (req.files && req.files['sellerAvatar'] && req.files['sellerAvatar'][0]) {
        sellerAvatar = await cloudUploads(req.files['sellerAvatar'][0].path);
      }
+     //==============================send mail
+   
+    await sendEMail(email, subject="Seller login details",  {email,name,password})
     const seller = await Seller.create({name,companyName,email,password:await makeHash(password),pricing,client:client?client:[],salesPerson:salesPerson?salesPerson:[],employment,totalWithdrawn,emailSignature,website,projects:projects?projects:[] , avatar:sellerAvatar?sellerAvatar:null,companyAvatar:companyPhoto?companyPhoto:null})
     if(!seller){
         return res.status(404).json({message:"Seller not create"})
@@ -219,10 +223,10 @@ try {
         sellerId,
         {
           $push: {
-            salesPerson: seller?._id // Assuming seller is an object with an _id property
+            salesPerson: seller?._id 
           }
         },
-        { new: true } // To return the updated document
+        { new: true } 
       );
       
         return res.status(200).json({seller:seller,message:"Seller created & pending"})

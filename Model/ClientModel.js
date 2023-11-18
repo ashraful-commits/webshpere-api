@@ -25,6 +25,10 @@ const clientSchema =mongoose.Schema({
     projectSource: {
         type:String
     },
+    password:{
+    type:String,
+    required:true
+    },
     sellerId:{
         type:mongoose.Schema.Types.ObjectId,
         default:null,

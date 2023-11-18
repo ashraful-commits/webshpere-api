@@ -8,6 +8,10 @@ const { Client } = require("../Model/ClientModel")
 const { Seller } = require("../Model/SellerModel")
 const { cloudUploads, cloudDownload, cloudDelete } = require("../Utils/Cloudinary");
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor");
+const { makeHash } = require("../Utils/CreateHashPassword");
+const sendEMail = require("../Middleware/SendMail");
+const { comparePasswords } = require("../Utils/PassWordCompare");
+const { makeToken } = require("../Utils/CreateToken");
 /*
  * GET ALL CLIENT
  * GET METHOD
@@ -171,7 +175,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
 */
 const createClient = expressAsyncHandler(async (req, res) => {
    try {
-     const { clientName,projectSource, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName,projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate,  } = req.body;
+     const { clientName,projectSource,password, sellerId, clientEmail, clientPhone, country, state, clientAddress, companyName, projectName,projectType, budget, amount, projectDesc, timeFrame, date, paymentReceived, label, invoices, comments, team, feedBack, commissionRate,  } = req.body;
      let projectFiles =[]
         if(req.files['projectFile']){
          if(req.files['projectFile']){
@@ -185,7 +189,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
         if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
          avatar = await cloudUploads(req.files['clientAvatar'][0].path);
        }
-     
+       await sendEMail(clientEmail, subject="Client login details",  {clientEmail,clientName,password})
        const clientData = await Client.create({
          clientName,
          clientEmail,
@@ -201,6 +205,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
          amount,
          projectDesc,
          timeFrame,
+         password:await makeHash(password),
          
          projectFile: projectFiles? projectFiles : null,
          date,
@@ -233,6 +238,58 @@ const createClient = expressAsyncHandler(async (req, res) => {
      return res.status(500).json({ message: "Internal Server Error" });
    }
  });
+/**
+*POST
+*CLIENT LOGIN
+*/
+ const ClientLogin =expressAsyncHandler(async(req,res)=>{
+  try {
+      const {clientEmail,password} = req.body
+      const IsExistClient = await Client.findOne({clientEmail})
+     
+      if(!IsExistClient){
+          return res.status(400).json({message:"Client not exist !"})
+      }else{
+          const compare =await comparePasswords(password,IsExistClient.password)
+          if(!compare){
+              return res.status(400).json({message:"Password not Match !"})
+          }else{
+              const Token =await makeToken(
+                  {
+                    email: IsExistClient.clientEmail,
+                    password: IsExistClient.password,
+                  },
+                  process.env.JWT_SECRECT,
+                  "7d"
+                );
+              const RefToken =await makeToken(
+                  {
+                    email: IsExistClient.clientEmail,
+                    password: IsExistClient.password,
+                  },
+                  process.env.REF_JWT_SECRECT,
+                  "30d"
+                );
+                res
+                  .cookie("clientToken", Token, {
+                    httpOnly: true,
+                    secure: process.env.APP_ENV === "development"?false:true,
+                    sameSite:"Lax",
+                    maxAge: 1000 * 60 * 60 * 24 * 7,
+                  })
+                  .status(200)
+                  .json({
+                    token: Token,
+                    refToken: RefToken,
+                    message: "Login success!",
+                    client: IsExistClient,
+                  });
+          }
+      }
+  } catch (error) {
+      console.log(error)
+  }
+  })
 /***
  * PATCH METHOD
  * CREATE CLIENT
@@ -315,8 +372,40 @@ const fileDownload = expressAsyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
  });
- 
+ /***
+* GET
+* LOGIN DATA
+*/
+ const me =expressAsyncHandler(async(req,res)=>{
 
+  try {
+    if(!req.me){
+     return res.status(400).json({message:"Login please !"})
+    }else{
+    return res.status(200).json({client:req.me,message:""})
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+/***
+* GET
+* LOGIN OUT
+*/
+const LogoutClient =expressAsyncHandler(async(req,res)=>{
+  try {
+    res
+    .clearCookie("clientToken", {
+      httpOnly: true,
+      secure: process.env.APP_ENV === "development"?false:true,
+      sameSite:"Lax",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    })
+    .json({ message: "Logout success!" });
+  } catch (error) {
+    console.log(error)
+  }
+})
 module.exports ={
-    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate,getSingleClient,updateCommissionRate,fileDownload
+    getAllClient,createClient,deleteClient,updateClient,PermissionUpdated,projectStatusUpdate,getSingleClient,updateCommissionRate,fileDownload,ClientLogin,me,LogoutClient
 }
