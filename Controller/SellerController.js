@@ -314,7 +314,7 @@ const LogoutSeller =expressAsyncHandler(async(req,res)=>{
       httpOnly: true,
       secure: process.env.APP_ENV === "development"?false:true,
       sameSite:"Lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 0,
     })
     .json({ message: "Logout success!" });
   } catch (error) {

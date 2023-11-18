@@ -189,7 +189,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
         if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
          avatar = await cloudUploads(req.files['clientAvatar'][0].path);
        }
-       await sendEMail(email=clientEmail, subject="Client login details",  {email:clientEmail,name:clientName,password})
+       await sendEMail(clientEmail, "Client login details",  {email:clientEmail,name:clientName,password})
        const clientData = await Client.create({
          clientName,
          clientEmail,
@@ -399,7 +399,7 @@ const LogoutClient =expressAsyncHandler(async(req,res)=>{
       httpOnly: true,
       secure: process.env.APP_ENV === "development"?false:true,
       sameSite:"Lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 0,
     })
     .json({ message: "Logout success!" });
   } catch (error) {

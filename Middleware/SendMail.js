@@ -56,6 +56,10 @@ const sendEMail = async (to, subject, data = {}) => {
               width: 100px;
               height: auto;
           }
+          .temp-body p{
+            width:100%;
+            margin:20px 0;
+          }
           .temp-body a{
               display: block;
               text-align: center;
@@ -93,8 +97,8 @@ const sendEMail = async (to, subject, data = {}) => {
                   <div class="temp-body">
                       <h5>Dear ${data.name}</h5>
                       <p>You can login with this email and password</p>
-                      <p>Email:${data.email}</p>
-                      <p>Password:${data.password}</p>
+                      <p>Email: ${data.email}</p>
+                      <p>Password: ${data.password}</p>
                       <p>You can login with this email and password</p>
                       <a href="https://wordsphere.vercel.app/">Login now</a>
                    
