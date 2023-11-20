@@ -19,7 +19,6 @@ const { Client } = require("../Model/ClientModel");
       expressAsyncHandler(async (err, decode) => {
         if(err) res.status(404).json({ message: "Not user" });
         const me = await Client.findOne({ email: decode?.email })
-       
         req.me = me;
         next();
       })
