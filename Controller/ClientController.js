@@ -189,6 +189,7 @@ const createClient = expressAsyncHandler(async (req, res) => {
         if (req.files && req.files['clientAvatar'] && req.files['clientAvatar'][0]) {
          avatar = await cloudUploads(req.files['clientAvatar'][0].path);
        }
+   
        await sendEMail(clientEmail, "Client login details",  {email:clientEmail,name:clientName,password})
        const clientData = await Client.create({
          clientName,
