@@ -1,116 +1,125 @@
-const mongoose =require("mongoose");
+const mongoose = require("mongoose");
 //=======================================schema
-const clientSchema =mongoose.Schema({
+const clientSchema = mongoose.Schema(
+  {
     clientName: {
-        type:String
+      type: String,
     },
-    clientEmail:{
-        type:String
+    clientEmail: {
+      type: String,
     },
     clientPhone: {
-        type:String
+      type: String,
     },
     country: {
-        type:String
+      type: String,
     },
     state: {
-        type:String
+      type: String,
     },
     clientAddress: {
-        type:String
+      type: String,
     },
     clientAvatar: {
-        type:String
+      type: String,
     },
     projectSource: {
-        type:String
+      type: String,
     },
-    password:{
-    type:String,
-    required:true
+    password: {
+      type: String,
+      required: true,
     },
-    sellerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        default:null,
-        ref:"Seller"
+    sellerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Seller",
     },
-    companyName:{
-        type:String
+    companyName: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "company",
     },
     projectName: {
-        type:String
+      type: String,
     },
-   
+
     projectType: {
-        type:String
+      type: String,
     },
     budget: {
-        type:String
+      type: String,
     },
     amount: {
-        type:Number
+      type: Number,
     },
     projectDesc: {
-        type:String
+      type: String,
     },
     timeFrame: {
-        type:String,
-        default:"30 days"
+      type: String,
+      default: "30 days",
     },
     projectFile: {
-        type:Array
+      type: Array,
     },
     date: {
-        type:String,
+      type: String,
     },
     tools: {
-        type:Array,
-        default:[]
+      type: Array,
+      default: [],
     },
-    paymentReceived:{
-        type:Number
+    paymentReceived: {
+      type: Number,
     },
-    label:{
-    type:Array
+    label: {
+      type: Array,
     },
-    invoices:{
-        type:Array
+    invoices: {
+      type: Array,
     },
-    comments:{
-        type:[mongoose.Schema.Types.ObjectId],
-        default:[]
+    comments: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
     },
-    team:{
-        type:[mongoose.Schema.Types.ObjectId],
-        default:[],
-        ref:"Seller"
+    team: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
+      ref: "Seller",
     },
-    feedBack:{
-        type:[mongoose.Schema.Types.ObjectId],
-        default:[]
+    feedBack: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
     },
-    commissionRate:{
-        type:String,
-        default:"15"
-    }, 
-    projectStatus:{
-        type:String
+    commissionRate: {
+      type: String,
+      default: "15",
     },
-    projectSource:{
-        type:String
+    salesCommissionRate: {
+      type: String,
+      default: "5",
     },
-    status:{
-        type:Boolean,
-        default:false
+    projectStatus: {
+      type: String,
     },
-    active:{
-        type:Boolean,
-        default:false
+    projectSource: {
+      type: String,
     },
-},{timestamps:true})
+    status: {
+      type: Boolean,
+      default: false,
+    },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
 //========================================export schema
-const Client = mongoose.model("Client",clientSchema)
-module.exports={
-    Client
-}
+const Client = mongoose.model("Client", clientSchema);
+module.exports = {
+  Client,
+};
