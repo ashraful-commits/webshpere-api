@@ -22,7 +22,6 @@ const clientAvatar = multer({
 const sellerAvatar = multer({
   storage: Storages,
 }).single("sellerAvatar");
-
 //  * COMPANY  AVATAR MULTER
 //  */
 const companyAvatarUpload = multer({
@@ -37,9 +36,6 @@ const projectFiles = multer({
 /**
  * CLIENT  MULTIPLE MULTER
  */
-const multipleFields = multer({
-  storage: Storages,
-}).fields([{ name: "projectFile", maxCount: 10 }, { name: "clientAvatar" }]);
 /**
  * SELLER  MULTIPLE MULTER
  */
@@ -51,7 +47,6 @@ module.exports = {
   clientAvatar,
   sellerAvatar,
   projectFiles,
-  multipleFields,
   sellerMultiAvatar,
   companyAvatarUpload,
 };
