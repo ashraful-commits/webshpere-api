@@ -172,40 +172,45 @@ const createClient = expressAsyncHandler(async (req, res) => {
       clientAddress,
       company,
     } = req.body;
-    let avatar;
-    if (req.file) {
-      avatar = await cloudUploads(req.file.path);
-    }
 
-    // await sendEMail(clientEmail, "Client login details", {
-    //   email: clientEmail,
-    //   name: clientName,
-    //   password,
-    // });
-    const clientData = await Client.create({
-      clientName,
-      clientEmail,
-      clientPhone,
-      country,
-      state,
-      clientAddress,
-      clientAvatar: avatar ? avatar : null,
-      company,
-      password: await makeHash(password),
-      sellerId,
-    });
-
-    if (!clientData) {
-      return res.status(400).json({ message: "No client created" });
+    const isExistClient = await Client.findOne({ clientEmail });
+    if (isExistClient) {
+      return res.status(400).json({ message: "Client Already exist!" });
     } else {
-      await Seller.findByIdAndUpdate(sellerId, {
-        $push: {
-          client: clientData?._id,
-        },
+      let avatar;
+      if (req.file) {
+        avatar = await cloudUploads(req.file.path);
+      }
+      // await sendEMail(clientEmail, "Client login details", {
+      //   email: clientEmail,
+      //   name: clientName,
+      //   password,
+      // });
+      const clientData = await Client.create({
+        clientName,
+        clientEmail,
+        clientPhone,
+        country,
+        state,
+        clientAddress,
+        clientAvatar: avatar ? avatar : null,
+        company,
+        password: await makeHash(password),
+        sellerId,
       });
-      return res
-        .status(200)
-        .json({ client: clientData, message: "Client created & pending" });
+
+      if (!clientData) {
+        return res.status(400).json({ message: "No client created" });
+      } else {
+        await Seller.findByIdAndUpdate(sellerId, {
+          $push: {
+            client: clientData?._id,
+          },
+        });
+        return res
+          .status(200)
+          .json({ client: clientData, message: "Client created & pending" });
+      }
     }
   } catch (error) {
     console.log(error.message);

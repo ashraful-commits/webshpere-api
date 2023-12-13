@@ -4,19 +4,15 @@ const companySchema = mongoose.Schema(
   {
     companyName: {
       type: String,
-      default: "",
     },
     location: {
       type: String,
-      default: "",
     },
     contact: {
       type: String,
-      default: "",
     },
     email: {
       type: String,
-      default: "",
     },
     companyLogo: {
       type: String,
@@ -41,6 +37,9 @@ const companySchema = mongoose.Schema(
     tools: {
       type: Array,
       default: [],
+    },
+    website: {
+      type: String,
     },
     status: {
       type: Boolean,

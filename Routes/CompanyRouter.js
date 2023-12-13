@@ -6,6 +6,7 @@ const {
   companyStatusUpdate,
   deleteCompany,
   getAllCompany,
+  getSingleCompany,
 } = require("../Controller/companyController");
 
 const companyRouter = express.Router();
@@ -18,6 +19,7 @@ companyRouter
   .route("/:id")
   .put(companyAvatarUpload, updateCompany)
   .patch(companyStatusUpdate)
-  .delete(deleteCompany);
+  .delete(deleteCompany)
+  .get(getSingleCompany);
 
 module.exports = companyRouter;

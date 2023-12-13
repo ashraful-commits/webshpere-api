@@ -4,16 +4,19 @@
 
 const expressAsyncHandler = require("express-async-handler");
 const { Company } = require("../Model/CompanyModel");
-const { cloudUploads } = require("../Utils/Cloudinary");
+const { cloudUploads, cloudDelete } = require("../Utils/Cloudinary");
+const publicIdGenerator = require("../Utils/PublicKeyGeneretor");
 
 const getAllCompany = expressAsyncHandler(async (req, res) => {
   try {
     const company = await Company.find();
 
-    if (company.length <= 0) {
+    if (company.length < 0) {
       return res.status(400).json({ message: "" });
     } else {
-      return res.status(200).json({ company: company });
+      return res
+        .status(200)
+        .json({ company: company, message: "All Company!" });
     }
   } catch (error) {
     console.error(error);
@@ -31,9 +34,31 @@ const deleteCompany = expressAsyncHandler(async (req, res) => {
 
     if (!company) {
       return res.status(400).json({ message: "Not company deleted" });
+    } else {
+      await cloudDelete(publicIdGenerator(company?.companyLogo));
+      return res
+        .status(200)
+        .json({ company: company, message: "company deleted" });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+/**
+ * GET SINGLE COMPANY
+ * GET METHOD
+ */
+const getSingleCompany = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const company = await Company.findById(id);
+
+    if (!company) {
+      return res.status(400).json({ message: "Not company " });
     }
 
-    res.status(200).json({ company: company, message: "company deleted" });
+    res.status(200).json({ company: company, message: "" });
   } catch (error) {
     console.log(error.message);
   }
@@ -46,17 +71,7 @@ const deleteCompany = expressAsyncHandler(async (req, res) => {
 const updateCompany = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      companyName,
-      location,
-      contact,
-      email,
-      course,
-      desc,
-      team,
-      testimonial,
-      tools,
-    } = req.body;
+    const { companyName, location, contact, email, desc, website } = req.body;
 
     let companyAvatar;
     if (req.file) {
@@ -69,12 +84,9 @@ const updateCompany = expressAsyncHandler(async (req, res) => {
         location,
         contact,
         email,
-        companyLogo: companyAvatar,
-        course,
         desc,
-        team,
-        testimonial,
-        tools,
+        website,
+        companyLogo: companyAvatar,
       },
       { new: true }
     );
@@ -99,18 +111,8 @@ const updateCompany = expressAsyncHandler(async (req, res) => {
  */
 const createCompany = expressAsyncHandler(async (req, res) => {
   try {
-    const {
-      companyName,
-      location,
-      contact,
-      email,
-      course,
-      desc,
-      team,
-      testimonial,
-      tools,
-    } = req.body;
-    const isExist = await Company.findOne({ companyName });
+    const { companyName, location, contact, email, desc, website } = req.body;
+    const isExist = await Company.findOne({ email });
     if (isExist) {
       return res.status(400).json({ message: "Already created" });
     }
@@ -123,11 +125,8 @@ const createCompany = expressAsyncHandler(async (req, res) => {
       location,
       contact,
       email,
-      course,
       desc,
-      team,
-      testimonial,
-      tools,
+      website,
       companyLogo: companyAvatar,
     });
 
@@ -159,11 +158,11 @@ const companyStatusUpdate = expressAsyncHandler(async (req, res) => {
       { new: true }
     );
     if (!companyStatusData) {
-      return res.status(400).json({ message: "Project status not updated" });
+      return res.status(400).json({ message: "company status not updated" });
     } else {
       return res.status(200).json({
         company: companyStatusData,
-        message: "Project status updated",
+        message: "company status updated",
       });
     }
   } catch (error) {
@@ -178,4 +177,5 @@ module.exports = {
   updateCompany,
   createCompany,
   companyStatusUpdate,
+  getSingleCompany,
 };
