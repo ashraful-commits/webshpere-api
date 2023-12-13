@@ -9,14 +9,16 @@ const { cloudUploads, cloudDelete } = require("../Utils/Cloudinary");
 const { Project } = require("../Model/ProjectModel");
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor");
 const { Seller } = require("../Model/SellerModel");
+const { Client } = require("../Model/ClientModel");
 
 const getAllProjects = expressAsyncHandler(async (req, res) => {
   try {
     const project = await Project.find()
       .populate({ path: "sellerId", model: "Seller" })
       .populate({ path: "clientId", model: "Client" })
-      .populate({ path: "company", model: "Company" });
-    if (project.length <= 0) {
+      .populate({ path: "company", model: "Company" })
+      .sort({ createdAt: -1 });
+    if (project.length < 0) {
       return res.status(400).json({ message: "No project " });
     } else {
       return res
@@ -44,6 +46,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
       budget,
       amount,
       projectDesc,
+      projectSource,
       timeFrame,
       date,
       paymentReceived,
@@ -181,6 +184,12 @@ const createProject = expressAsyncHandler(async (req, res) => {
     if (!project) {
       return res.status(400).json({ message: "No project create" });
     } else {
+      await Seller.findByIdAndUpdate(sellerId, {
+        $push: { projects: project?._id },
+      });
+      await Client.findByIdAndUpdate(clientId, {
+        $push: { projects: project?._id },
+      });
       return res
         .status(200)
         .json({ project: project, message: "Project create" });
@@ -202,6 +211,12 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
     if (!project) {
       return res.status(400).json({ message: "Not project deleted" });
     } else {
+      await Seller.findByIdAndUpdate(project?.sellerId, {
+        $pull: { projects: project?._id },
+      });
+      await Client.findByIdAndUpdate(project?.clientId, {
+        $pull: { projects: project?._id },
+      });
       if (project.projectFile) {
         project.projectFile.forEach(async (element) => {
           await cloudDelete(publicIdGenerator(element));

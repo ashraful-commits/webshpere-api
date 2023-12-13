@@ -82,14 +82,10 @@ const deleteClient = expressAsyncHandler(async (req, res) => {
 const getSingleClient = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const client = await Client.findById(id).populate([
-      {
-        path: "sellerId",
-        model: "Seller",
-        populate: { path: "salesPerson", model: "Seller" },
-      },
-      { path: "team", model: "Seller" },
-    ]);
+    const client = await Client.findById(id).populate({
+      path: "sellerId",
+      model: "Seller",
+    });
     if (!client) {
       return res.status(400).json({ message: "Not client" });
     } else {
@@ -181,11 +177,11 @@ const createClient = expressAsyncHandler(async (req, res) => {
       avatar = await cloudUploads(req.file.path);
     }
 
-    await sendEMail(clientEmail, "Client login details", {
-      email: clientEmail,
-      name: clientName,
-      password,
-    });
+    // await sendEMail(clientEmail, "Client login details", {
+    //   email: clientEmail,
+    //   name: clientName,
+    //   password,
+    // });
     const clientData = await Client.create({
       clientName,
       clientEmail,

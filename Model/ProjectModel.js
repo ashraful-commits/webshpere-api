@@ -10,7 +10,7 @@ const projectSchema = mongoose.Schema(
     company: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
-      ref: "company",
+      ref: "Company",
     },
     projectSource: {
       type: String,
@@ -81,6 +81,7 @@ const projectSchema = mongoose.Schema(
     },
     projectStatus: {
       type: String,
+      default: "pending",
     },
     projectSource: {
       type: String,

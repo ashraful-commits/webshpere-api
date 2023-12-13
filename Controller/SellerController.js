@@ -50,31 +50,18 @@ const getSingleSeller = expressAsyncHandler(async (req, res) => {
       .populate({
         path: "client",
         model: "Client",
-        populate: {
-          path: "team",
-          model: "Seller",
-        },
-      })
-      .populate({
-        path: "projects",
-        model: "Client",
+        populate: { path: "company", model: "Company" },
       })
       .populate({
         path: "salesPerson",
         model: "Seller",
+      })
+      .populate({
+        path: "projects",
+        model: "Project",
         populate: [
-          {
-            path: "client",
-            model: "Client",
-          },
-          {
-            path: "projects",
-            model: "Project",
-          },
-          {
-            path: "salesPerson",
-            model: "Seller",
-          },
+          { path: "clientId", model: "Client" },
+          { path: "company", model: "Company" },
         ],
       });
     if (!seller) {

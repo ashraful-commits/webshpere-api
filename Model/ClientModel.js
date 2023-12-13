@@ -36,6 +36,11 @@ const clientSchema = mongoose.Schema(
       ref: "Seller",
       default: null,
     },
+    projects: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Project",
+      default: [],
+    },
     status: {
       type: Boolean,
       default: false,
