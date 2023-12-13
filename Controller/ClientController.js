@@ -27,7 +27,7 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
         model: "Company",
       });
 
-    if (client.length <= 0) {
+    if (client.length < 0) {
       return res.status(400).json({ message: "" });
     } else {
       return res.status(200).json({ client: client });

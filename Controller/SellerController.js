@@ -256,6 +256,8 @@ const createSeller = expressAsyncHandler(async (req, res) => {
         name,
         password,
       });
+      //=========================================const find length of seller
+      const roleData = await Seller.find();
       const seller = await Seller.create({
         name,
         companyName,
@@ -271,6 +273,7 @@ const createSeller = expressAsyncHandler(async (req, res) => {
         projects: projects ? projects : [],
         avatar: sellerAvatar ? sellerAvatar : null,
         companyAvatar: companyPhoto ? companyPhoto : null,
+        role: roleData?.length === 0 ? "super_admin" : "user",
       });
       if (!seller) {
         return res.status(404).json({ message: "Seller not create" });
