@@ -15,24 +15,11 @@ const sendEMail = require("../Middleware/SendMail");
  */
 const getAllSeller = expressAsyncHandler(async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 7;
-    const role = req.query.role;
-    const skip = (page - 1) * limit;
-
-    if (role === "super_admin") {
-      const seller = await Seller.find()
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip(skip);
-
-      if (seller.length <= 0) {
-        return res.status(400).json({ message: "" });
-      } else {
-        return res.status(200).json({ seller, message: "" });
-      }
-    } else {
+    const seller = await Seller.find();
+    if (seller.length <= 0) {
       return res.status(400).json({ message: "" });
+    } else {
+      return res.status(200).json({ seller, message: "" });
     }
   } catch (error) {
     console.log(error.message);
@@ -164,7 +151,7 @@ const updateSellerStatus = expressAsyncHandler(async (req, res) => {
 const updateSeller = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, employment, website } = req.body;
+    const { name, email, employment, website, companyName, role } = req.body;
 
     let companyPhoto;
     if (
@@ -194,6 +181,8 @@ const updateSeller = expressAsyncHandler(async (req, res) => {
         employment,
         website,
         avatar: sellerAvatar,
+        companyName,
+        role,
         companyAvatar: companyPhoto,
       },
       { new: true }
