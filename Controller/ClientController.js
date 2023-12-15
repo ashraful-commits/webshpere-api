@@ -25,6 +25,10 @@ const getAllClient = expressAsyncHandler(async (req, res) => {
       .populate({
         path: "company",
         model: "Company",
+      })
+      .populate({
+        path: "projects",
+        model: "Project",
       });
 
     if (client.length < 0) {

@@ -37,7 +37,10 @@ const getSingleSeller = expressAsyncHandler(async (req, res) => {
       .populate({
         path: "client",
         model: "Client",
-        populate: { path: "company", model: "Company" },
+        populate: [
+          { path: "company", model: "Company" },
+          { path: "projects", model: "Project" },
+        ],
       })
       .populate({
         path: "salesPerson",
