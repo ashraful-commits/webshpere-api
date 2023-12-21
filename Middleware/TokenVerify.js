@@ -34,6 +34,10 @@ const tokenVerify = (req, res, next) => {
             { path: "clientId", model: "Client" },
             { path: "company", model: "Company" },
           ],
+        })
+        .populate({
+          path: "company",
+          model: "Company",
         });
       req.me = me;
       next();

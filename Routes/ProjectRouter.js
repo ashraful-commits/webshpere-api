@@ -9,6 +9,8 @@ const {
   projectStatusUpdate,
   updateCommissionRate,
   updateSalesCommissionRate,
+  AddMoreFile,
+  deleteFiles,
 } = require("../Controller/ProjectController.js");
 const { projectFiles } = require("../Middleware/Multer.js");
 
@@ -27,5 +29,6 @@ ProjectRouter.route("/salescommissionRate/:id").patch(
 );
 ProjectRouter.route("/file/:url/:fileFormat").get(updateSalesCommissionRate);
 module.exports = ProjectRouter;
-ProjectRouter.route("/file/deletefile").post(updateSalesCommissionRate);
+ProjectRouter.route("/deletefile/:id").post(deleteFiles);
+ProjectRouter.route("/addmorefile/:id").post(projectFiles, AddMoreFile);
 module.exports = ProjectRouter;

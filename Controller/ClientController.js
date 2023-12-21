@@ -159,6 +159,34 @@ const updateClient = expressAsyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+//=======================update client permission
+const permissionUpdate = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedData = await Client.findByIdAndUpdate(
+      id,
+      {
+        status,
+      },
+      { new: true }
+    );
+
+    if (!updatedData) {
+      return res
+        .status(404)
+        .json({ client: updatedData, message: "Not Updated!" });
+    } else {
+      return res
+        .status(200)
+        .json({ client: updatedData, message: "Client Updated!" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 /**
  *POST
  *CREATE CLIENT
@@ -317,4 +345,5 @@ module.exports = {
   ClientLogin,
   me,
   LogoutClient,
+  permissionUpdate,
 };

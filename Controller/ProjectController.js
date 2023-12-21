@@ -2,9 +2,7 @@
 GET
 GET ALL PROJECTS
 */
-
 const expressAsyncHandler = require("express-async-handler");
-
 const { cloudUploads, cloudDelete } = require("../Utils/Cloudinary");
 const { Project } = require("../Model/ProjectModel");
 const publicIdGenerator = require("../Utils/PublicKeyGeneretor");
@@ -29,7 +27,6 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
     console.log(error.message);
   }
 });
-
 /***
 PUT
 UPDATE PROJECTS
@@ -125,7 +122,6 @@ const updateProject = expressAsyncHandler(async (req, res) => {
 POST
 CREATE PROJECTS
 */
-
 const createProject = expressAsyncHandler(async (req, res) => {
   try {
     const {
@@ -231,13 +227,22 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
     console.log(error.message);
   }
 });
+/**
+ * GET
+ * GET SINGLE project
+ */
 const getSingleProject = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const project = await Project.findById(id)
-      .populate({ path: "sellerId", model: "Seller" })
+      .populate({
+        path: "sellerId",
+        model: "Seller",
+        populate: { path: "salesPerson", model: "Seller" },
+      })
       .populate({ path: "clientId", model: "Client" })
-      .populate({ path: "company", model: "Company" });
+      .populate({ path: "company", model: "Company" })
+      .populate({ path: "team", model: "Seller" });
     if (!project) {
       return res.status(400).json({ message: "Not project" });
     } else {
@@ -248,8 +253,8 @@ const getSingleProject = expressAsyncHandler(async (req, res) => {
   }
 });
 /**
- * GET
- * GET SINGLE project
+ * UPDATE
+ * UPDATE PERMISSION
  */
 const PermissionUpdated = expressAsyncHandler(async (req, res) => {
   try {
@@ -328,6 +333,10 @@ const updateCommissionRate = expressAsyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+/**
+ * PATCH
+ * UPDATE SALES COMMISSION RATE
+ */
 const updateSalesCommissionRate = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
@@ -370,23 +379,60 @@ const fileDownload = expressAsyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+/**
+ * DELETE
+ * DELETE FILE
+ */
 const deleteFiles = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const { file } = req.body;
     const updateFile = await Project.findById(id);
-
     await cloudDelete(publicIdGenerator(file));
     const filterFileData = updateFile.projectFile.filter(
       (item) => item !== file
     );
     updateFile.projectFile = filterFileData;
     updateFile.save();
-    res.status(200).json({ project: updateFile });
+    res.status(200).json({ project: updateFile, message: "file deleted!" });
   } catch (error) {
     console.log(error);
   }
 });
+
+/**
+ * POST
+ * UPLOAD FILE
+ */
+const AddMoreFile = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectData = await Project.findById(id);
+    let projectFiles = projectData.projectFile || [];
+    if (req.files) {
+      if (req.files) {
+        for (let i = 0; i < req.files.length; i++) {
+          const fileUrl = await cloudUploads(req.files[i].path);
+          projectFiles.push(fileUrl);
+        }
+      }
+    }
+    //================================find project
+    const project = await Project.findByIdAndUpdate(
+      id,
+      {
+        projectFile: projectFiles,
+      },
+      { new: true }
+    );
+    if (project) {
+      return res.status(200).json({ message: "File add" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+//================================EXPORT
 module.exports = {
   createProject,
   getAllProjects,
@@ -399,4 +445,5 @@ module.exports = {
   updateProject,
   deleteProject,
   getSingleProject,
+  AddMoreFile,
 };

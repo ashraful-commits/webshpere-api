@@ -27,16 +27,11 @@ const sellerSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    companyName: {
-      type: String,
-      trim: true,
-      default: "",
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
     },
-    companyAvatar: {
-      type: String,
-      trim: true,
-      default: null,
-    },
+
     following: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Seller",

@@ -15,7 +15,36 @@ const sendEMail = require("../Middleware/SendMail");
  */
 const getAllSeller = expressAsyncHandler(async (req, res) => {
   try {
-    const seller = await Seller.find();
+    const seller = await Seller.find()
+      .populate({
+        path: "client",
+        model: "Client",
+        populate: [
+          { path: "company", model: "Company" },
+          { path: "projects", model: "Project" },
+        ],
+      })
+      .populate({
+        path: "salesPerson",
+        model: "Seller",
+        populate: [
+          { path: "projects", model: "Project" },
+          { path: "client", model: "Client" },
+        ],
+      })
+      .populate({
+        path: "projects",
+        model: "Project",
+        populate: [
+          { path: "clientId", model: "Client" },
+          { path: "company", model: "Company" },
+        ],
+      })
+      .populate({
+        path: "company",
+        model: "Company",
+      });
+
     if (seller.length <= 0) {
       return res.status(400).json({ message: "" });
     } else {
@@ -48,6 +77,7 @@ const getSingleSeller = expressAsyncHandler(async (req, res) => {
         populate: [
           { path: "projects", model: "Project" },
           { path: "client", model: "Client" },
+          { path: "company", model: "Company" },
         ],
       })
       .populate({
@@ -57,6 +87,10 @@ const getSingleSeller = expressAsyncHandler(async (req, res) => {
           { path: "clientId", model: "Client" },
           { path: "company", model: "Company" },
         ],
+      })
+      .populate({
+        path: "company",
+        model: "Company",
       });
     if (!seller) {
       return res.status(400).json({ message: "No seller" });
@@ -154,16 +188,8 @@ const updateSellerStatus = expressAsyncHandler(async (req, res) => {
 const updateSeller = expressAsyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, employment, website, companyName, role } = req.body;
+    const { name, email, employment, website, company, role } = req.body;
 
-    let companyPhoto;
-    if (
-      req.files &&
-      req.files["companyAvatar"] &&
-      req.files["companyAvatar"][0]
-    ) {
-      companyPhoto = await cloudUploads(req.files["companyAvatar"][0].path);
-    }
     let sellerAvatar;
     if (
       req.files &&
@@ -184,9 +210,8 @@ const updateSeller = expressAsyncHandler(async (req, res) => {
         employment,
         website,
         avatar: sellerAvatar,
-        companyName,
+        company,
         role,
-        companyAvatar: companyPhoto,
       },
       { new: true }
     );
@@ -211,7 +236,7 @@ const createSeller = expressAsyncHandler(async (req, res) => {
       password,
       pricing,
       client,
-      companyName,
+      company,
       salesPerson,
       sellerId,
       employment,
@@ -225,14 +250,6 @@ const createSeller = expressAsyncHandler(async (req, res) => {
     if (isEmailExist) {
       return res.status(404).json({ message: "Email already exist" });
     } else {
-      let companyPhoto;
-      if (
-        req.files &&
-        req.files["companyAvatar"] &&
-        req.files["companyAvatar"][0]
-      ) {
-        companyPhoto = await cloudUploads(req.files["companyAvatar"][0].path);
-      }
       let sellerAvatar;
       if (
         req.files &&
@@ -252,7 +269,7 @@ const createSeller = expressAsyncHandler(async (req, res) => {
       const roleData = await Seller.find();
       const seller = await Seller.create({
         name,
-        companyName,
+        company,
         email,
         password: await makeHash(password),
         pricing,
@@ -264,7 +281,6 @@ const createSeller = expressAsyncHandler(async (req, res) => {
         website,
         projects: projects ? projects : [],
         avatar: sellerAvatar ? sellerAvatar : null,
-        companyAvatar: companyPhoto ? companyPhoto : null,
         role: roleData?.length === 0 ? "super_admin" : "user",
       });
       if (!seller) {

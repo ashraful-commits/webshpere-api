@@ -8,6 +8,7 @@ const {
   ClientLogin,
   me,
   LogoutClient,
+  permissionUpdate,
 } = require("../Controller/ClientController.js");
 const { ClientTokenVerify } = require("../Middleware/ClientTokenVerify.js");
 const { clientAvatar } = require("../Middleware/Multer.js");
@@ -19,7 +20,11 @@ clientRouter.route("/login").post(ClientLogin);
 //==========================================delete client
 clientRouter.route("/").get(getAllClient);
 //==========================================permission client
-clientRouter.route("/:id").put(clientAvatar, updateClient).delete(deleteClient);
+clientRouter
+  .route("/:id")
+  .put(clientAvatar, updateClient)
+  .delete(deleteClient)
+  .patch(permissionUpdate);
 
 //========================================== get single client
 clientRouter.route("/clientId/:id").get(getSingleClient);
